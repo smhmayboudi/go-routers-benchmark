@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/alexedwards/flow"
 	"github.com/gin-gonic/gin"
 	"github.com/go-chi/chi"
 	"github.com/kamalshkeir/kmux"
@@ -15,11 +16,11 @@ import (
 
 func BenchmarkKmux(b *testing.B) {
 	app := kmux.New()
-	app.Get("/test/smhmayboudi/hello/bye", func(c *kmux.Context) {
+	app.Get("/test/first/second/third/fourth/fifth", func(c *kmux.Context) {
 		c.Text("Hello")
 	})
 
-	req := httptest.NewRequest("GET", "/test/smhmayboudi/hello/bye", nil)
+	req := httptest.NewRequest("GET", "/test/first/second/third/fourth/fifth", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -29,11 +30,11 @@ func BenchmarkKmux(b *testing.B) {
 
 func BenchmarkKsmux(b *testing.B) {
 	app := ksmux.New()
-	app.Get("/test/smhmayboudi/hello/bye", func(c *ksmux.Context) {
+	app.Get("/test/first/second/third/fourth/fifth", func(c *ksmux.Context) {
 		c.Text("Hello")
 	})
 
-	req := httptest.NewRequest("GET", "/test/smhmayboudi/hello/bye", nil)
+	req := httptest.NewRequest("GET", "/test/first/second/third/fourth/fifth", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -43,12 +44,12 @@ func BenchmarkKsmux(b *testing.B) {
 
 func BenchmarkChi(b *testing.B) {
 	app := chi.NewRouter()
-	app.Get("/test/smhmayboudi/hello/bye", func(w http.ResponseWriter, r *http.Request) {
+	app.Get("/test/first/second/third/fourth/fifth", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
 		w.Write([]byte("Hello"))
 	})
 
-	req := httptest.NewRequest("GET", "/test/smhmayboudi/hello/bye", nil)
+	req := httptest.NewRequest("GET", "/test/first/second/third/fourth/fifth", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -58,12 +59,12 @@ func BenchmarkChi(b *testing.B) {
 
 func BenchmarkNetHTTP(b *testing.B) {
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /test/smhmayboudi/hello/bye", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /test/first/second/third/fourth/fifth", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
 		w.Write([]byte("Hello"))
 	})
 
-	req := httptest.NewRequest("GET", "/test/smhmayboudi/hello/bye", nil)
+	req := httptest.NewRequest("GET", "/test/first/second/third/fourth/fifth", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -74,11 +75,11 @@ func BenchmarkNetHTTP(b *testing.B) {
 func BenchmarkGin(b *testing.B) {
 	gin.SetMode(gin.ReleaseMode)
 	app := gin.New()
-	app.GET("/test/smhmayboudi/hello/bye", func(ctx *gin.Context) {
+	app.GET("/test/first/second/third/fourth/fifth", func(ctx *gin.Context) {
 		ctx.String(200, "Hello")
 	})
 
-	req := httptest.NewRequest("GET", "/test/smhmayboudi/hello/bye", nil)
+	req := httptest.NewRequest("GET", "/test/first/second/third/fourth/fifth", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -88,11 +89,11 @@ func BenchmarkGin(b *testing.B) {
 
 func BenchmarkEcho(b *testing.B) {
 	app := echo.New()
-	app.GET("/test/smhmayboudi/hello/bye", func(c echo.Context) error {
+	app.GET("/test/first/second/third/fourth/fifth", func(c echo.Context) error {
 		return c.String(200, "Hello")
 	})
 
-	req := httptest.NewRequest("GET", "/test/smhmayboudi/hello/bye", nil)
+	req := httptest.NewRequest("GET", "/test/first/second/third/fourth/fifth", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -100,13 +101,29 @@ func BenchmarkEcho(b *testing.B) {
 	}
 }
 
-func BenchmarkKmuxWithParam(b *testing.B) {
+func BenchmarkFlow(b *testing.B) {
+	app := flow.New()
+
+	app.HandleFunc("/test/first/second/third/fourth/fifth", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Hello")
+	}, "GET")
+
+	req := httptest.NewRequest("GET", "/test/first/second/third/fourth/fifth", nil)
+	w := httptest.NewRecorder()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
+	}
+}
+
+func BenchmarkKmuxWith1Param(b *testing.B) {
 	app := kmux.New()
-	app.Get("/test/:something", func(c *kmux.Context) {
-		c.Text("Hello " + c.Param("something"))
+	app.Get("/test/:first", func(c *kmux.Context) {
+		first := c.Param("first")
+		c.Text(fmt.Sprintf("Hello %s", first))
 	})
 
-	req := httptest.NewRequest("GET", "/test/user1", nil)
+	req := httptest.NewRequest("GET", "/test/first", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -114,13 +131,14 @@ func BenchmarkKmuxWithParam(b *testing.B) {
 	}
 }
 
-func BenchmarkKsmuxWithParam(b *testing.B) {
+func BenchmarkKsmuxWith1Param(b *testing.B) {
 	app := ksmux.New()
-	app.Get("/test/:something", func(c *ksmux.Context) {
-		c.Text("Hello " + c.Param("something"))
+	app.Get("/test/:first", func(c *ksmux.Context) {
+		first := c.Param("first")
+		c.Text(fmt.Sprintf("Hello %s", first))
 	})
 
-	req := httptest.NewRequest("GET", "/test/user1", nil)
+	req := httptest.NewRequest("GET", "/test/first", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -128,14 +146,15 @@ func BenchmarkKsmuxWithParam(b *testing.B) {
 	}
 }
 
-func BenchmarkChiWithParam(b *testing.B) {
+func BenchmarkChiWith1Param(b *testing.B) {
 	app := chi.NewRouter()
-	app.Get("/test/{something}", func(w http.ResponseWriter, r *http.Request) {
+	app.Get("/test/{first}", func(w http.ResponseWriter, r *http.Request) {
+		first := chi.URLParam(r, "first")
 		w.WriteHeader(200)
-		w.Write([]byte("Hello " + chi.URLParam(r, "something")))
+		w.Write([]byte(fmt.Sprintf("Hello %s", first)))
 	})
 
-	req := httptest.NewRequest("GET", "/test/user1", nil)
+	req := httptest.NewRequest("GET", "/test/first", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -143,14 +162,15 @@ func BenchmarkChiWithParam(b *testing.B) {
 	}
 }
 
-func BenchmarkNetHTTPWithParam(b *testing.B) {
+func BenchmarkNetHTTPWith1Param(b *testing.B) {
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /test/{something}/{$}", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /test/{first}/{$}", func(w http.ResponseWriter, r *http.Request) {
+		first := r.PathValue("first")
 		w.WriteHeader(200)
-		w.Write([]byte("Hello " + r.PathValue("something")))
+		w.Write([]byte(fmt.Sprintf("Hello %s", first)))
 	})
 
-	req := httptest.NewRequest("GET", "/test/user1", nil)
+	req := httptest.NewRequest("GET", "/test/first", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -158,14 +178,15 @@ func BenchmarkNetHTTPWithParam(b *testing.B) {
 	}
 }
 
-func BenchmarkGinWithParam(b *testing.B) {
+func BenchmarkGinWith1Param(b *testing.B) {
 	gin.SetMode(gin.ReleaseMode)
 	app := gin.New()
-	app.GET("/test/:something", func(ctx *gin.Context) {
-		ctx.String(200, "Hello "+ctx.Param("something"))
+	app.GET("/test/:first", func(ctx *gin.Context) {
+		first := ctx.Param("first")
+		ctx.String(200, "Hello %s", first)
 	})
 
-	req := httptest.NewRequest("GET", "/test/user1", nil)
+	req := httptest.NewRequest("GET", "/test/first", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -173,13 +194,30 @@ func BenchmarkGinWithParam(b *testing.B) {
 	}
 }
 
-func BenchmarkEchoWithParam(b *testing.B) {
+func BenchmarkEchoWith1Param(b *testing.B) {
 	app := echo.New()
-	app.GET("/test/:something", func(c echo.Context) error {
-		return c.String(200, "Hello "+c.Param("something"))
+	app.GET("/test/:first", func(c echo.Context) error {
+		first := c.Param("first")
+		return c.String(200, fmt.Sprintf("Hello %s", first))
 	})
 
-	req := httptest.NewRequest("GET", "/test/user1", nil)
+	req := httptest.NewRequest("GET", "/test/first", nil)
+	w := httptest.NewRecorder()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
+	}
+}
+
+func BenchmarkFlowWith1Param(b *testing.B) {
+	app := flow.New()
+
+	app.HandleFunc("/test/:first", func(w http.ResponseWriter, r *http.Request) {
+		first := flow.Param(r.Context(), "first")
+		fmt.Fprintf(w, "Hello %s", first)
+	}, "GET")
+
+	req := httptest.NewRequest("GET", "/test/first", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -189,11 +227,13 @@ func BenchmarkEchoWithParam(b *testing.B) {
 
 func BenchmarkKmuxWith2Param(b *testing.B) {
 	app := kmux.New()
-	app.Get("/test/:something/:another", func(c *kmux.Context) {
-		c.Text("Hello " + c.Param("something") + c.Param("another"))
+	app.Get("/test/:first/:second", func(c *kmux.Context) {
+		first := c.Param("first")
+		second := c.Param("second")
+		c.Text(fmt.Sprintf("Hello %s %s", first, second))
 	})
 
-	req := httptest.NewRequest("GET", "/test/user1/more", nil)
+	req := httptest.NewRequest("GET", "/test/first/second", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -203,11 +243,30 @@ func BenchmarkKmuxWith2Param(b *testing.B) {
 
 func BenchmarkKsmuxWith2Param(b *testing.B) {
 	app := ksmux.New()
-	app.Get("/test/:something/:another", func(c *ksmux.Context) {
-		c.Text("Hello " + c.Param("something") + c.Param("another"))
+	app.Get("/test/:first/:second", func(c *ksmux.Context) {
+		first := c.Param("first")
+		second := c.Param("second")
+		c.Text(fmt.Sprintf("Hello %s %s", first, second))
 	})
 
-	req := httptest.NewRequest("GET", "/test/user1/more", nil)
+	req := httptest.NewRequest("GET", "/test/first/second", nil)
+	w := httptest.NewRecorder()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
+	}
+}
+
+func BenchmarkChiWith2Param(b *testing.B) {
+	app := chi.NewRouter()
+	app.Get("/test/{first}/{second}", func(w http.ResponseWriter, r *http.Request) {
+		first := chi.URLParam(r, "first")
+		second := chi.URLParam(r, "second")
+		w.WriteHeader(200)
+		w.Write([]byte(fmt.Sprintf("Hello %s %s", first, second)))
+	})
+
+	req := httptest.NewRequest("GET", "/test/first/second", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -217,12 +276,14 @@ func BenchmarkKsmuxWith2Param(b *testing.B) {
 
 func BenchmarkNetHTTPWith2Param(b *testing.B) {
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /test/{something}/{another}/{$}", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /test/{first}/{second}/{$}", func(w http.ResponseWriter, r *http.Request) {
+		first := r.PathValue("first")
+		second := r.PathValue("second")
 		w.WriteHeader(200)
-		w.Write([]byte("Hello, " + r.PathValue("something") + r.PathValue("another")))
+		w.Write([]byte(fmt.Sprintf("Hello %s %s", first, second)))
 	})
 
-	req := httptest.NewRequest("GET", "/test/user1/more", nil)
+	req := httptest.NewRequest("GET", "/test/first/second", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -233,11 +294,13 @@ func BenchmarkNetHTTPWith2Param(b *testing.B) {
 func BenchmarkGinWith2Param(b *testing.B) {
 	gin.SetMode(gin.ReleaseMode)
 	app := gin.New()
-	app.GET("/test/:something/:another", func(ctx *gin.Context) {
-		ctx.String(200, "Hello "+ctx.Param("something")+ctx.Param("another"))
+	app.GET("/test/:first/:second", func(ctx *gin.Context) {
+		first := ctx.Param("first")
+		second := ctx.Param("second")
+		ctx.String(200, "Hello %s %s", first, second)
 	})
 
-	req := httptest.NewRequest("GET", "/test/user1/more", nil)
+	req := httptest.NewRequest("GET", "/test/first/second", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -247,11 +310,30 @@ func BenchmarkGinWith2Param(b *testing.B) {
 
 func BenchmarkEchoWith2Param(b *testing.B) {
 	app := echo.New()
-	app.GET("/test/:something/:another", func(c echo.Context) error {
-		return c.String(200, "Hello "+c.Param("something")+c.Param("another"))
+	app.GET("/test/:first/:second", func(c echo.Context) error {
+		first := c.Param("first")
+		second := c.Param("second")
+		return c.String(200, fmt.Sprintf("Hello %s %s", first, second))
 	})
 
-	req := httptest.NewRequest("GET", "/test/user1/more", nil)
+	req := httptest.NewRequest("GET", "/test/first/second", nil)
+	w := httptest.NewRecorder()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
+	}
+}
+
+func BenchmarkFlowWith2Param(b *testing.B) {
+	app := flow.New()
+
+	app.HandleFunc("/test/:first", func(w http.ResponseWriter, r *http.Request) {
+		first := flow.Param(r.Context(), "first")
+		second := flow.Param(r.Context(), "second")
+		fmt.Fprintf(w, "Hello %s %s", first, second)
+	}, "GET")
+
+	req := httptest.NewRequest("GET", "/test/first/second", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -262,10 +344,15 @@ func BenchmarkEchoWith2Param(b *testing.B) {
 func BenchmarkKmuxWith5Param(b *testing.B) {
 	app := kmux.New()
 	app.Get("/test/:first/:second/:third/:fourth/:fifth", func(c *kmux.Context) {
-		c.Text("Hello " + c.Param("first") + c.Param("second") + c.Param("third") + c.Param("fourth") + c.Param("fifth"))
+		first := c.Param("first")
+		second := c.Param("second")
+		third := c.Param("third")
+		fourth := c.Param("fourth")
+		fifth := c.Param("fifth")
+		c.Text(fmt.Sprintf("Hello %s %s %s %s %s", first, second, third, fourth, fifth))
 	})
 
-	req := httptest.NewRequest("GET", "/test/user1/more/one/two/three", nil)
+	req := httptest.NewRequest("GET", "/test/first/second/third/forth/fifth", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -276,10 +363,35 @@ func BenchmarkKmuxWith5Param(b *testing.B) {
 func BenchmarkKsmuxWith5Param(b *testing.B) {
 	app := ksmux.New()
 	app.Get("/test/:first/:second/:third/:fourth/:fifth", func(c *ksmux.Context) {
-		c.Text("Hello " + c.Param("first") + c.Param("second") + c.Param("third") + c.Param("fourth") + c.Param("fifth"))
+		first := c.Param("first")
+		second := c.Param("second")
+		third := c.Param("third")
+		fourth := c.Param("fourth")
+		fifth := c.Param("fifth")
+		c.Text(fmt.Sprintf("Hello %s %s %s %s %s", first, second, third, fourth, fifth))
 	})
 
-	req := httptest.NewRequest("GET", "/test/user1/more/one/two/three", nil)
+	req := httptest.NewRequest("GET", "/test/first/second/third/forth/fifth", nil)
+	w := httptest.NewRecorder()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
+	}
+}
+
+func BenchmarkChiWith5Param(b *testing.B) {
+	app := chi.NewRouter()
+	app.Get("/test/{first}/{second}/{third}/{fourth}/{fifth}", func(w http.ResponseWriter, r *http.Request) {
+		first := chi.URLParam(r, "first")
+		second := chi.URLParam(r, "second")
+		third := chi.URLParam(r, "third")
+		fourth := chi.URLParam(r, "fourth")
+		fifth := chi.URLParam(r, "fifth")
+		w.WriteHeader(200)
+		w.Write([]byte(fmt.Sprintf("Hello %s %s %s %s %s", first, second, third, fourth, fifth)))
+	})
+
+	req := httptest.NewRequest("GET", "/test/first/second/third/forth/fifth", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -290,11 +402,16 @@ func BenchmarkKsmuxWith5Param(b *testing.B) {
 func BenchmarkNetHTTPWith5Param(b *testing.B) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /test/{first}/{second}/{third}/{fourth}/{fifth}/{$}", func(w http.ResponseWriter, r *http.Request) {
+		first := r.PathValue("first")
+		second := r.PathValue("second")
+		third := r.PathValue("third")
+		fourth := r.PathValue("fourth")
+		fifth := r.PathValue("fifth")
 		w.WriteHeader(200)
-		fmt.Fprint(w, "Hello, "+r.PathValue("first")+r.PathValue("second")+r.PathValue("third")+r.PathValue("fourth")+r.PathValue("fifth"))
+		w.Write([]byte(fmt.Sprintf("Hello %s %s %s %s %s", first, second, third, fourth, fifth)))
 	})
 
-	req := httptest.NewRequest("GET", "/test/user1/more/one/two/three", nil)
+	req := httptest.NewRequest("GET", "/test/first/second/third/forth/fifth", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -306,10 +423,15 @@ func BenchmarkGinWith5Param(b *testing.B) {
 	gin.SetMode(gin.ReleaseMode)
 	app := gin.New()
 	app.GET("/test/:first/:second/:third/:fourth/:fifth", func(ctx *gin.Context) {
-		ctx.String(200, "Hello "+ctx.Param("first")+ctx.Param("second")+ctx.Param("third")+ctx.Param("fourth")+ctx.Param("fifth"))
+		first := ctx.Param("first")
+		second := ctx.Param("second")
+		third := ctx.Param("third")
+		fourth := ctx.Param("fourth")
+		fifth := ctx.Param("fifth")
+		ctx.String(200, "Hello %s %s %s %s %s", first, second, third, fourth, fifth)
 	})
 
-	req := httptest.NewRequest("GET", "/test/user1/more/one/two/three", nil)
+	req := httptest.NewRequest("GET", "/test/first/second/third/forth/fifth", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {
@@ -320,10 +442,35 @@ func BenchmarkGinWith5Param(b *testing.B) {
 func BenchmarkEchoWith5Param(b *testing.B) {
 	app := echo.New()
 	app.GET("/test/:first/:second/:third/:fourth/:fifth", func(c echo.Context) error {
-		return c.String(200, "Hello "+c.Param("first")+c.Param("second")+c.Param("third")+c.Param("fourth")+c.Param("fifth"))
+		first := c.Param("first")
+		second := c.Param("second")
+		third := c.Param("third")
+		fourth := c.Param("fourth")
+		fifth := c.Param("fifth")
+		return c.String(200, fmt.Sprintf("Hello %s %s %s %s %s", first, second, third, fourth, fifth))
 	})
 
-	req := httptest.NewRequest("GET", "/test/user1/more/one/two/three", nil)
+	req := httptest.NewRequest("GET", "/test/first/second/third/forth/fifth", nil)
+	w := httptest.NewRecorder()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
+	}
+}
+
+func BenchmarkFlowWith5Param(b *testing.B) {
+	app := flow.New()
+
+	app.HandleFunc("/test/:first/:second/:third/:fourth/:fifth", func(w http.ResponseWriter, r *http.Request) {
+		first := flow.Param(r.Context(), "first")
+		second := flow.Param(r.Context(), "second")
+		third := flow.Param(r.Context(), "third")
+		fourth := flow.Param(r.Context(), "fourth")
+		fifth := flow.Param(r.Context(), "fifth")
+		fmt.Fprintf(w, "Hello %s %s %s %s %s", first, second, third, fourth, fifth)
+	}, "GET")
+
+	req := httptest.NewRequest("GET", "/test/first/second/third/forth/fifth", nil)
 	w := httptest.NewRecorder()
 
 	for i := 0; i < b.N; i++ {

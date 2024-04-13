@@ -3,6 +3,7 @@ module github.com/smhmayboudi/go-routers-benchmark
 go 1.22.0
 
 require (
+	github.com/alexedwards/flow v0.1.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-chi/chi v1.5.5
 	github.com/kamalshkeir/kmux v1.91.95
