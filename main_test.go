@@ -11,6 +11,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/adaptor"
+	"github.com/gorilla/mux"
 	"github.com/kamalshkeir/kmux"
 	"github.com/kamalshkeir/ksmux"
 	"github.com/labstack/echo/v4"
@@ -129,6 +130,21 @@ func BenchmarkFiber(b *testing.B) {
 	handlerFunc := adaptor.FiberApp(app)
 	for i := 0; i < b.N; i++ {
 		handlerFunc.ServeHTTP(w, req)
+	}
+}
+
+func BenchmarkGorilla(b *testing.B) {
+	app := mux.NewRouter()
+	app.HandleFunc("/test/first/second/third/fourth/fifth", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "Hello")
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/fourth/fifth", nil)
+	w := httptest.NewRecorder()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
 	}
 }
 
@@ -253,6 +269,23 @@ func BenchmarkFiberWith1Param(b *testing.B) {
 	handlerFunc := adaptor.FiberApp(app)
 	for i := 0; i < b.N; i++ {
 		handlerFunc.ServeHTTP(w, req)
+	}
+}
+
+func BenchmarkGorillaWith1Param(b *testing.B) {
+	app := mux.NewRouter()
+	app.HandleFunc("/test/{first}", func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		first := vars["first"]
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "Hello %s", first)
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/test/first", nil)
+	w := httptest.NewRecorder()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
 	}
 }
 
@@ -385,6 +418,24 @@ func BenchmarkFiberWith2Param(b *testing.B) {
 	handlerFunc := adaptor.FiberApp(app)
 	for i := 0; i < b.N; i++ {
 		handlerFunc.ServeHTTP(w, req)
+	}
+}
+
+func BenchmarkGorillaWith2Param(b *testing.B) {
+	app := mux.NewRouter()
+	app.HandleFunc("/test/{first}/{second}", func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		first := vars["first"]
+		second := vars["second"]
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "Hello %s %s", first, second)
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/test/first/second", nil)
+	w := httptest.NewRecorder()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
 	}
 }
 
@@ -541,5 +592,26 @@ func BenchmarkFiberWith5Param(b *testing.B) {
 	handlerFunc := adaptor.FiberApp(app)
 	for i := 0; i < b.N; i++ {
 		handlerFunc.ServeHTTP(w, req)
+	}
+}
+
+func BenchmarkGorillaWith5Param(b *testing.B) {
+	app := mux.NewRouter()
+	app.HandleFunc("/test/{first}/{second}/{third}/{fourth}/{fifth}", func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		first := vars["first"]
+		second := vars["second"]
+		third := vars["third"]
+		fourth := vars["fourth"]
+		fifth := vars["fifth"]
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "Hello %s %s %s %s %s", first, second, third, fourth, fifth)
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/fourth/fifth", nil)
+	w := httptest.NewRecorder()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
 	}
 }
