@@ -26,6 +26,9 @@ func BenchmarkKmux(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/fourth/fifth", nil)
 	w := httptest.NewRecorder()
 
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
 	}
@@ -39,6 +42,9 @@ func BenchmarkKsmux(b *testing.B) {
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/fourth/fifth", nil)
 	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
@@ -55,6 +61,9 @@ func BenchmarkChi(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/fourth/fifth", nil)
 	w := httptest.NewRecorder()
 
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
 	}
@@ -69,6 +78,9 @@ func BenchmarkNetHTTP(b *testing.B) {
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/fourth/fifth", nil)
 	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		mux.ServeHTTP(w, req)
@@ -85,6 +97,9 @@ func BenchmarkGin(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/fourth/fifth", nil)
 	w := httptest.NewRecorder()
 
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
 	}
@@ -99,6 +114,9 @@ func BenchmarkEcho(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/fourth/fifth", nil)
 	w := httptest.NewRecorder()
 
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
 	}
@@ -112,6 +130,9 @@ func BenchmarkFlow(b *testing.B) {
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/fourth/fifth", nil)
 	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
@@ -128,6 +149,10 @@ func BenchmarkFiber(b *testing.B) {
 	w := httptest.NewRecorder()
 
 	handlerFunc := adaptor.FiberApp(app)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		handlerFunc.ServeHTTP(w, req)
 	}
@@ -142,6 +167,9 @@ func BenchmarkGorilla(b *testing.B) {
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/fourth/fifth", nil)
 	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
@@ -158,6 +186,9 @@ func BenchmarkKmuxWith1Param(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/test/first", nil)
 	w := httptest.NewRecorder()
 
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
 	}
@@ -172,6 +203,9 @@ func BenchmarkKsmuxWith1Param(b *testing.B) {
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first", nil)
 	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
@@ -189,6 +223,9 @@ func BenchmarkChiWith1Param(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/test/first", nil)
 	w := httptest.NewRecorder()
 
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
 	}
@@ -204,6 +241,9 @@ func BenchmarkNetHTTPWith1Param(b *testing.B) {
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first", nil)
 	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		mux.ServeHTTP(w, req)
@@ -221,6 +261,9 @@ func BenchmarkGinWith1Param(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/test/first", nil)
 	w := httptest.NewRecorder()
 
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
 	}
@@ -236,6 +279,9 @@ func BenchmarkEchoWith1Param(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/test/first", nil)
 	w := httptest.NewRecorder()
 
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
 	}
@@ -250,6 +296,9 @@ func BenchmarkFlowWith1Param(b *testing.B) {
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first", nil)
 	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
@@ -267,6 +316,10 @@ func BenchmarkFiberWith1Param(b *testing.B) {
 	w := httptest.NewRecorder()
 
 	handlerFunc := adaptor.FiberApp(app)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		handlerFunc.ServeHTTP(w, req)
 	}
@@ -284,6 +337,9 @@ func BenchmarkGorillaWith1Param(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/test/first", nil)
 	w := httptest.NewRecorder()
 
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
 	}
@@ -300,6 +356,9 @@ func BenchmarkKmuxWith2Param(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second", nil)
 	w := httptest.NewRecorder()
 
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
 	}
@@ -315,6 +374,9 @@ func BenchmarkKsmuxWith2Param(b *testing.B) {
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second", nil)
 	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
@@ -333,6 +395,9 @@ func BenchmarkChiWith2Param(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second", nil)
 	w := httptest.NewRecorder()
 
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
 	}
@@ -349,6 +414,9 @@ func BenchmarkNetHTTPWith2Param(b *testing.B) {
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second", nil)
 	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		mux.ServeHTTP(w, req)
@@ -367,6 +435,9 @@ func BenchmarkGinWith2Param(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second", nil)
 	w := httptest.NewRecorder()
 
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
 	}
@@ -383,6 +454,9 @@ func BenchmarkEchoWith2Param(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second", nil)
 	w := httptest.NewRecorder()
 
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
 	}
@@ -398,6 +472,9 @@ func BenchmarkFlowWith2Param(b *testing.B) {
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second", nil)
 	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
@@ -416,6 +493,10 @@ func BenchmarkFiberWith2Param(b *testing.B) {
 	w := httptest.NewRecorder()
 
 	handlerFunc := adaptor.FiberApp(app)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		handlerFunc.ServeHTTP(w, req)
 	}
@@ -433,6 +514,9 @@ func BenchmarkGorillaWith2Param(b *testing.B) {
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second", nil)
 	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
@@ -453,6 +537,9 @@ func BenchmarkKmuxWith5Param(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/forth/fifth", nil)
 	w := httptest.NewRecorder()
 
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
 	}
@@ -471,6 +558,9 @@ func BenchmarkKsmuxWith5Param(b *testing.B) {
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/forth/fifth", nil)
 	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
@@ -492,6 +582,9 @@ func BenchmarkChiWith5Param(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/forth/fifth", nil)
 	w := httptest.NewRecorder()
 
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
 	}
@@ -511,6 +604,9 @@ func BenchmarkNetHTTPWith5Param(b *testing.B) {
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/forth/fifth", nil)
 	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		mux.ServeHTTP(w, req)
@@ -532,6 +628,9 @@ func BenchmarkGinWith5Param(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/forth/fifth", nil)
 	w := httptest.NewRecorder()
 
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
 	}
@@ -551,6 +650,9 @@ func BenchmarkEchoWith5Param(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/forth/fifth", nil)
 	w := httptest.NewRecorder()
 
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
 	}
@@ -569,6 +671,9 @@ func BenchmarkFlowWith5Param(b *testing.B) {
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/forth/fifth", nil)
 	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
@@ -590,6 +695,10 @@ func BenchmarkFiberWith5Param(b *testing.B) {
 	w := httptest.NewRecorder()
 
 	handlerFunc := adaptor.FiberApp(app)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		handlerFunc.ServeHTTP(w, req)
 	}
@@ -610,6 +719,9 @@ func BenchmarkGorillaWith5Param(b *testing.B) {
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/fourth/fifth", nil)
 	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		app.ServeHTTP(w, req)
