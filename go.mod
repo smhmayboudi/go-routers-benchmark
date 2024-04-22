@@ -11,6 +11,7 @@ require (
 	github.com/kamalshkeir/kmux v1.91.95
 	github.com/kamalshkeir/ksmux v0.0.5
 	github.com/labstack/echo/v4 v4.11.4
+	github.com/uptrace/bunrouter v1.0.21
 )
 
 require (

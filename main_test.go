@@ -15,6 +15,7 @@ import (
 	"github.com/kamalshkeir/kmux"
 	"github.com/kamalshkeir/ksmux"
 	"github.com/labstack/echo/v4"
+	"github.com/uptrace/bunrouter"
 )
 
 func BenchmarkKmux(b *testing.B) {
@@ -161,8 +162,25 @@ func BenchmarkFiber(b *testing.B) {
 func BenchmarkGorilla(b *testing.B) {
 	app := mux.NewRouter()
 	app.HandleFunc("/test/first/second/third/fourth/fifth", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "Hello")
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/fourth/fifth", nil)
+	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
+	}
+}
+
+func BenchmarkBunRouter(b *testing.B) {
+	app := bunrouter.New()
+	app.GET("/test/first/second/third/fourth/fifth", func(w http.ResponseWriter, r bunrouter.Request) error {
+		fmt.Fprintf(w, "Hello")
+		return nil
 	})
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/fourth/fifth", nil)
@@ -330,8 +348,26 @@ func BenchmarkGorillaWith1Param(b *testing.B) {
 	app.HandleFunc("/test/{first}", func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		first := vars["first"]
-		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "Hello %s", first)
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/test/first", nil)
+	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
+	}
+}
+
+func BenchmarkBunRouterWith1Param(b *testing.B) {
+	app := bunrouter.New()
+	app.GET("/test/{first}", func(w http.ResponseWriter, r bunrouter.Request) error {
+		first := r.Param("first")
+		fmt.Fprintf(w, "Hello %s", first)
+		return nil
 	})
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first", nil)
@@ -508,8 +544,27 @@ func BenchmarkGorillaWith2Param(b *testing.B) {
 		vars := mux.Vars(r)
 		first := vars["first"]
 		second := vars["second"]
-		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "Hello %s %s", first, second)
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/test/first/second", nil)
+	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
+	}
+}
+
+func BenchmarkBunRouterWith2Param(b *testing.B) {
+	app := bunrouter.New()
+	app.GET("/test/{first}", func(w http.ResponseWriter, r bunrouter.Request) error {
+		first := r.Param("first")
+		second := r.Param("second")
+		fmt.Fprintf(w, "Hello %s %s", first, second)
+		return nil
 	})
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second", nil)
@@ -713,8 +768,30 @@ func BenchmarkGorillaWith5Param(b *testing.B) {
 		third := vars["third"]
 		fourth := vars["fourth"]
 		fifth := vars["fifth"]
-		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "Hello %s %s %s %s %s", first, second, third, fourth, fifth)
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/fourth/fifth", nil)
+	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
+	}
+}
+
+func BenchmarkBunRouterWith5Param(b *testing.B) {
+	app := bunrouter.New()
+	app.GET("/test/{first}", func(w http.ResponseWriter, r bunrouter.Request) error {
+		first := r.Param("first")
+		second := r.Param("second")
+		third := r.Param("third")
+		fourth := r.Param("fourth")
+		fifth := r.Param("fifth")
+		fmt.Fprintf(w, "Hello %s %s %s %s %s", first, second, third, fourth, fifth)
+		return nil
 	})
 
 	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/fourth/fifth", nil)
