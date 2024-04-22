@@ -12,6 +12,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/adaptor"
 	"github.com/gorilla/mux"
+	"github.com/julienschmidt/httprouter"
 	"github.com/kamalshkeir/kmux"
 	"github.com/kamalshkeir/ksmux"
 	"github.com/labstack/echo/v4"
@@ -142,6 +143,23 @@ func BenchmarkGorilla(b *testing.B) {
 	}
 }
 
+func BenchmarkHttpRouter(b *testing.B) {
+	app := httprouter.New()
+	app.GET("/test/first/second/third/fourth/fifth", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		fmt.Fprintf(w, "Hello")
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/fourth/fifth", nil)
+	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
+	}
+}
+
 func BenchmarkKmux(b *testing.B) {
 	app := kmux.New()
 	app.Get("/test/first/second/third/fourth/fifth", func(c *kmux.Context) {
@@ -196,7 +214,7 @@ func BenchmarkNetHTTP(b *testing.B) {
 
 func BenchmarkBunRouterWith1Param(b *testing.B) {
 	app := bunrouter.New()
-	app.GET("/test/{first}", func(w http.ResponseWriter, r bunrouter.Request) error {
+	app.GET("/test/:first", func(w http.ResponseWriter, r bunrouter.Request) error {
 		first := r.Param("first")
 		fmt.Fprintf(w, "Hello %s", first)
 		return nil
@@ -327,6 +345,24 @@ func BenchmarkGorillaWith1Param(b *testing.B) {
 	}
 }
 
+func BenchmarkHttpRouterWith1Param(b *testing.B) {
+	app := httprouter.New()
+	app.GET("/test/:first", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		first := p.ByName("first")
+		fmt.Fprintf(w, "Hello %s", first)
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/test/first", nil)
+	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
+	}
+}
+
 func BenchmarkKmuxWith1Param(b *testing.B) {
 	app := kmux.New()
 	app.Get("/test/:first", func(c *kmux.Context) {
@@ -384,7 +420,7 @@ func BenchmarkNetHTTPWith1Param(b *testing.B) {
 
 func BenchmarkBunRouterWith2Param(b *testing.B) {
 	app := bunrouter.New()
-	app.GET("/test/{first}", func(w http.ResponseWriter, r bunrouter.Request) error {
+	app.GET("/test/:first/:second", func(w http.ResponseWriter, r bunrouter.Request) error {
 		first := r.Param("first")
 		second := r.Param("second")
 		fmt.Fprintf(w, "Hello %s %s", first, second)
@@ -521,6 +557,25 @@ func BenchmarkGorillaWith2Param(b *testing.B) {
 	}
 }
 
+func BenchmarkHttpRouterWith2Param(b *testing.B) {
+	app := httprouter.New()
+	app.GET("/test/:first/:second", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		first := p.ByName("first")
+		second := p.ByName("second")
+		fmt.Fprintf(w, "Hello %s %s", first, second)
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/test/first/second", nil)
+	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
+	}
+}
+
 func BenchmarkKmuxWith2Param(b *testing.B) {
 	app := kmux.New()
 	app.Get("/test/:first/:second", func(c *kmux.Context) {
@@ -581,7 +636,7 @@ func BenchmarkNetHTTPWith2Param(b *testing.B) {
 
 func BenchmarkBunRouterWith5Param(b *testing.B) {
 	app := bunrouter.New()
-	app.GET("/test/{first}", func(w http.ResponseWriter, r bunrouter.Request) error {
+	app.GET("/test/:first/:second/:third/:fourth/:fifth", func(w http.ResponseWriter, r bunrouter.Request) error {
 		first := r.Param("first")
 		second := r.Param("second")
 		third := r.Param("third")
@@ -725,6 +780,28 @@ func BenchmarkGorillaWith5Param(b *testing.B) {
 		third := vars["third"]
 		fourth := vars["fourth"]
 		fifth := vars["fifth"]
+		fmt.Fprintf(w, "Hello %s %s %s %s %s", first, second, third, fourth, fifth)
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/test/first/second/third/fourth/fifth", nil)
+	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		app.ServeHTTP(w, req)
+	}
+}
+
+func BenchmarkHttpRouterWith5Param(b *testing.B) {
+	app := httprouter.New()
+	app.GET("/test/:first/:second/:third/:fourth/:fifth", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		first := p.ByName("first")
+		second := p.ByName("second")
+		third := p.ByName("third")
+		fourth := p.ByName("fourth")
+		fifth := p.ByName("fifth")
 		fmt.Fprintf(w, "Hello %s %s %s %s %s", first, second, third, fourth, fifth)
 	})
 

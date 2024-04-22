@@ -8,6 +8,7 @@ require (
 	github.com/go-chi/chi v1.5.5
 	github.com/gofiber/fiber/v3 v3.0.0-beta.2
 	github.com/gorilla/mux v1.8.1
+	github.com/julienschmidt/httprouter v1.3.0
 	github.com/kamalshkeir/kmux v1.91.95
 	github.com/kamalshkeir/ksmux v0.0.5
 	github.com/labstack/echo/v4 v4.11.4

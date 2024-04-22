@@ -6,24 +6,24 @@ import (
 )
 
 func main() {
-	mux := http.NewServeMux()
+	app := http.NewServeMux()
 
-	mux.HandleFunc("GET /test/first/second/third/fourth/fifth", func(w http.ResponseWriter, r *http.Request) {
+	app.HandleFunc("GET /test/first/second/third/fourth/fifth", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("INDEX PAGE"))
 	})
 
-	mux.HandleFunc("GET /test/{first}/{$}", func(w http.ResponseWriter, r *http.Request) {
+	app.HandleFunc("GET /test/{first}/{$}", func(w http.ResponseWriter, r *http.Request) {
 		first := r.PathValue("first")
 		w.Write([]byte(fmt.Sprintf("Hello %s", first)))
 	})
 
-	mux.HandleFunc("GET /test/{first}/{second}/{$}", func(w http.ResponseWriter, r *http.Request) {
+	app.HandleFunc("GET /test/{first}/{second}/{$}", func(w http.ResponseWriter, r *http.Request) {
 		first := r.PathValue("first")
 		second := r.PathValue("second")
 		w.Write([]byte(fmt.Sprintf("Hello %s %s", first, second)))
 	})
 
-	mux.HandleFunc("GET /test/{first}/{second}/{third}/{fourth}/{fifth}/{$}", func(w http.ResponseWriter, r *http.Request) {
+	app.HandleFunc("GET /test/{first}/{second}/{third}/{fourth}/{fifth}/{$}", func(w http.ResponseWriter, r *http.Request) {
 		first := r.PathValue("first")
 		second := r.PathValue("second")
 		third := r.PathValue("third")
@@ -33,7 +33,7 @@ func main() {
 	})
 
 	fmt.Println("Listenning on http://localhost:8080")
-	if err := http.ListenAndServe(":8080", mux); err != nil {
+	if err := http.ListenAndServe(":8080", app); err != nil {
 		fmt.Println("err:", err)
 		return
 	}
