@@ -60,3 +60,8 @@ BenchmarkNetHTTPWith5Param-8      	  801085	      1466 ns/op	    1016 B/op	     
 PASS
 coverage: 0.0% of statements
 ```
+
+## References
+
+- https://github.com/kamalshkeir/bench-go-routers
+- https://github.com/mingrammer/go-web-framework-stars
