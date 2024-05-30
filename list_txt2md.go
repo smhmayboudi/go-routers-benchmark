@@ -150,7 +150,7 @@ func getAccessToken() string {
 }
 
 func saveRanking(repos []Repo) {
-	readme, err := os.OpenFile("list.md", os.O_RDWR|os.O_TRUNC, 0666)
+	readme, err := os.OpenFile("LIST.md", os.O_RDWR|os.O_TRUNC, 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
